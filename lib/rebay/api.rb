@@ -48,7 +48,15 @@ module Rebay
       payload = ''
       unless params.nil?
         params.keys.each do |key|
-          payload += URI.escape "&#{key}=#{params[key]}"
+          #implemented pull request from carvill to support array params thanks!
+          if params[key].is_a?(Array)
+            params[key].each_with_index do |object, index|
+              payload += URI.escape "&#{key}(#{index}).name=#{object[:name]}"
+              payload += URI.escape "&#{key}(#{index}).value=#{object[:value]}"
+            end
+          else
+            payload += URI.escape "&#{key}=#{params[key]}"
+          end
         end
       end
       return payload
